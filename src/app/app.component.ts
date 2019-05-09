@@ -37,16 +37,39 @@ export class AppComponent {
 	};
 	public lineChartColors: Color[] = [
 		{
-			borderColor: 'black',
-			backgroundColor: 'rgba(255,0,0,0.3)',
+			borderColor: 'grey',
+			backgroundColor: 'grey',
 		},
+		{
+			borderColor: 'blue',
+			backgroundColor: 'blue',
+		},
+		{
+			borderColor: 'red',
+			backgroundColor: 'red',
+		},
+		{
+			borderColor: 'green',
+			backgroundColor: 'green',
+		},
+		{
+			borderColor: 'pink',
+			backgroundColor: 'pink',
+		},
+		{
+			borderColor: 'violet',
+			backgroundColor: 'violet',
+		},
+		{
+			borderColor: 'orange',
+			backgroundColor: 'orange',
+		}
 	];
 	public lineChartLegend = false;
 	public lineChartType = 'line';
 	public lineChartPlugins = [];
 
 	constructor() {
-
 		this.dataFromAPI = [
 			{
 				"successStatus": "Sent",
@@ -629,32 +652,27 @@ export class AppComponent {
 		]
 
 		console.log(this.dataFromAPI)
-		const title = [];
+		this.lineChartData = this.getLineChartData();
+	}
+	getLineChartData() {
+		const labels = [];
 		const report = [];
 		this.dataFromAPI.forEach(element => {
 			if (element) {
 				report.push(element.report);
-				title.push(element.title);
+				labels.push(element.title);
 			}
 		});
 		console.log(report);
-		console.log(title);
-		this.lineChartLabels = title;
-		const result = this.manipulateData(report);
-		const a = this.arrangeData(result);
-		this.lineChartData = a;
-
+		console.log(labels);
+		this.lineChartLabels = labels;
+		const mergedObjects = this.mergeData(report);
+		const dataSets = this.createDataAccordingToGraph(mergedObjects);
+		return dataSets;
 	}
-	getRandomColor() {
-		var letters = '0123456789ABCDEF';
-		var color = '#';
-		for (var i = 0; i < 6; i++) {
-			color += letters[Math.floor(Math.random() * 16)];
-		}
-		return color;
-	}
-	manipulateData(report) {
-		const resultData = report.reduce((r, e) => {
+	
+	mergeData(report) {
+		const mergeData = report.reduce((r, e) => {
 			return Object.keys(e).forEach((k) => {
 				if (!r[k]) {
 					r[k] = [].concat(e[k])
@@ -664,32 +682,38 @@ export class AppComponent {
 				}
 			}), r
 		}, {})
-		console.log(resultData)
-		return resultData;
+		console.log(mergeData)
+		return mergeData;
 	}
-	arrangeData(result) {
-		const b = [];
-		for (let key in result) {
-			if (result.hasOwnProperty(key)) {
-				b.push({
-					data: result[key],
+	createDataAccordingToGraph(mergedObject) {
+		const dataSets = [];
+		for (let key in mergedObject) {
+			if (mergedObject.hasOwnProperty(key)) {
+				dataSets.push({
+					data: mergedObject[key],
 					label: key,
-					fill: false,
-					backgroundColor: this.getRandomColor(),
-					borderColor: this.getRandomColor(),
+					fill: false
 				})
 			}
 		}
-		console.log(b)
-		this.sortData(b);
-		console.log(b)
-		return b;
+		console.log(dataSets)
+		this.sortData(dataSets);
+		console.log(dataSets)
+		return dataSets;
 	}
-	sortData(b) {
-		b.sort((a, b) => {
-			var textA = a.label.toUpperCase();
-			var textB = b.label.toUpperCase();
-			return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+	sortData(dataSets) {
+		dataSets.sort((a, b) => {
+			let labelA = a.label.toUpperCase();
+			let labelB = b.label.toUpperCase();
+			return (labelA < labelB) ? -1 : (labelA > labelB) ? 1 : 0;
 		});
+	}
+	getRandomColor() {
+		var letters = '0123456789ABCDEF';
+		var color = '#';
+		for (var i = 0; i < 6; i++) {
+			color += letters[Math.floor(Math.random() * 16)];
+		}
+		return color;
 	}
 }
