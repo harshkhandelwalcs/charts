@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ChartDataSets, ChartOptions } from 'chart.js';
+import { ChartDataSets } from 'chart.js';
 import { Color, Label } from 'ng2-charts';
 
 @Component({
@@ -11,25 +11,8 @@ import { Color, Label } from 'ng2-charts';
 export class AppComponent {
 	title = 'chartjs';
 	public dataFromAPI = [];
-	public lineChartData: ChartDataSets[] = [
-		{ data: [44, 43, 0, 4, 44, 43, 0, 4, 4, 4, 44, 43, 2, 4, 44, 43, 2, 45, 44, 43, 4], label: 'All', fill: false },
-		{ data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0], label: 'Bounced', fill: false },
-		{ data: [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], label: 'Clicked', fill: false },
-		{ data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 22, 0, 0, 0], label: 'Complaint', fill: false },
-		{ data: [11, 0, 0, 1, 8, 0, 0, 0, 1, 1, 18, 18, 2, 0, 12, 18, 0, 0, 11, 12, 0], label: 'Opened', fill: false },
-		{ data: [43, 0, 0, 4, 43, 0, 0, 4, 4, 4, 43, 43, 2, 0, 43, 43, 2, 0, 43, 37, 4], label: 'Sent', fill: false },
-		{ data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], label: 'Unsubscribe', fill: false }
-	];
-	public lineChartLabels: Label[] = ['Email campaign test : stage 1',
-	 'Email campaign test : stage 2',
-	  'Email campaign test : stage 3', 
-	  'Download our App and streamline your life!', 
-	  'Stage 1', 'Stage 2', 'Stage 3',
-	  'Download our App and streamline your life!',
-	  'Meet Via! Youre gonna love her!',
-	'stage 1','Stage 2 (Received)','stage 3 (opened)',
-	'Meet Via! Youre gonna love her!',
-'Stage 1','Birthday Test','Stage 3','Renew Test','Stage 1','stage 2','stage 3'];
+	public lineChartData: ChartDataSets[] = [];
+	public lineChartLabels: Label[] = [];
 	public lineChartOptions = {
 		responsive: true,
 		maintainAspectRatio: false,
@@ -41,20 +24,20 @@ export class AppComponent {
 			mode: 'index',
 			intersect: false
 		},
-		scales:{
-            xAxes: [{
+		scales: {
+			xAxes: [{
 				display: true,
 				ticks: {
-					display: false //this will remove only the label
+					display: false
 				}
-            }]
+			}]
 		},
 		pointRadius: 2,
 		pointHoverRadius: 4
 	};
 	public lineChartColors: Color[] = [
 		{
-			borderColor: 'blue',
+			borderColor: 'black',
 			backgroundColor: 'rgba(255,0,0,0.3)',
 		},
 	];
@@ -644,16 +627,53 @@ export class AppComponent {
 				}
 			}
 		]
+
 		console.log(this.dataFromAPI)
-		const keys = [];
-		const value = [];
+		const title = [];
 		const report = [];
 		this.dataFromAPI.forEach(element => {
 			if (element) {
 				report.push(element.report);
+				title.push(element.title);
 			}
 		});
 		console.log(report);
+		console.log(title);
+		this.lineChartLabels = title;
+		const result = report.reduce((r, e) => {
+			return Object.keys(e).forEach((k) => {
+				if (!r[k]) {
+					r[k] = [].concat(e[k])
+				}
+				else {
+					r[k] = r[k].concat(e[k])
+				}
+			}), r
+		}, {})
 
+		console.log(result)
+		const a = [];
+		for (let key in result) {
+			if (result.hasOwnProperty(key)) {
+				a.push({
+					data: result[key],
+					label: key,
+					fill: false,
+					backgroundColor: this.getRandomColor(),
+					borderColor: this.getRandomColor(),
+				})
+			}
+		}
+		console.log(a)
+		this.lineChartData = a;
+
+	}
+	getRandomColor() {
+		var letters = '0123456789ABCDEF';
+		var color = '#';
+		for (var i = 0; i < 6; i++) {
+			color += letters[Math.floor(Math.random() * 16)];
+		}
+		return color;
 	}
 }
