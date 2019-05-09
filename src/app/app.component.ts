@@ -640,36 +640,8 @@ export class AppComponent {
 		console.log(report);
 		console.log(title);
 		this.lineChartLabels = title;
-		const result = report.reduce((r, e) => {
-			return Object.keys(e).forEach((k) => {
-				if (!r[k]) {
-					r[k] = [].concat(e[k])
-				}
-				else {
-					r[k] = r[k].concat(e[k])
-				}
-			}), r
-		}, {})
-
-		console.log(result)
-		const a = [];
-		for (let key in result) {
-			if (result.hasOwnProperty(key)) {
-				a.push({
-					data: result[key],
-					label: key,
-					fill: false,
-					backgroundColor: this.getRandomColor(),
-					borderColor: this.getRandomColor(),
-				})
-			}
-		}
-		console.log(a)
-		a.sort((a, b) => {
-			var textA = a.label.toUpperCase();
-			var textB = b.label.toUpperCase();
-			return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
-		});
+		const result = this.manipulateData(report);
+		const a = this.arrangeData(result);
 		this.lineChartData = a;
 
 	}
@@ -680,5 +652,44 @@ export class AppComponent {
 			color += letters[Math.floor(Math.random() * 16)];
 		}
 		return color;
+	}
+	manipulateData(report) {
+		const resultData = report.reduce((r, e) => {
+			return Object.keys(e).forEach((k) => {
+				if (!r[k]) {
+					r[k] = [].concat(e[k])
+				}
+				else {
+					r[k] = r[k].concat(e[k])
+				}
+			}), r
+		}, {})
+		console.log(resultData)
+		return resultData;
+	}
+	arrangeData(result) {
+		const b = [];
+		for (let key in result) {
+			if (result.hasOwnProperty(key)) {
+				b.push({
+					data: result[key],
+					label: key,
+					fill: false,
+					backgroundColor: this.getRandomColor(),
+					borderColor: this.getRandomColor(),
+				})
+			}
+		}
+		console.log(b)
+		this.sortData(b);
+		console.log(b)
+		return b;
+	}
+	sortData(b) {
+		b.sort((a, b) => {
+			var textA = a.label.toUpperCase();
+			var textB = b.label.toUpperCase();
+			return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+		});
 	}
 }
