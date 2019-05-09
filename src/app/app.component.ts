@@ -665,6 +665,11 @@ export class AppComponent {
 			}
 		}
 		console.log(a)
+		a.sort((a, b) => {
+			var textA = a.label.toUpperCase();
+			var textB = b.label.toUpperCase();
+			return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+		});
 		this.lineChartData = a;
 
 	}
